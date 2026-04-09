@@ -1,5 +1,6 @@
 import type { FastifyInstance, FastifyPluginOptions } from "fastify";
 import * as userControllers from "../controllers/userControllers";
+import { registerSchema } from "../schemas/registerUser";
 
 /*
 
@@ -19,6 +20,7 @@ export async function userRoutes(
     method: "POST",
     url: "/register",
     handler: userControllers.register,
+    schema: registerSchema,
   });
 
   httpServer.route({

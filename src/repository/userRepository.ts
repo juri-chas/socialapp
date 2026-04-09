@@ -3,7 +3,7 @@ import { db } from "../db/client";
 import type { RegisterRequest } from "../types/http";
 import type { UserRow } from "../types/db";
 
-export async function insertUser(input: RegisterRequest) {
+export async function insertOne(input: RegisterRequest) {
   const createdAt = new Date().toISOString();
 
   const [created] = await db<
@@ -15,7 +15,7 @@ export async function insertUser(input: RegisterRequest) {
   return created;
 }
 
-export async function getUserByUsername(username: string) {
+export async function getByUsername(username: string) {
   const [user] = await db<UserRow[]>`
     SELECT * FROM users where username = ${username}
     `;
