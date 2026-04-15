@@ -2,7 +2,8 @@ import type { FastifyReply, FastifyRequest } from "fastify";
 import type { LoginRequest, RegisterRequest } from "../types/http";
 import repository from "../repository";
 import type { TokenPayload } from "../types/auth";
-import { ADMIN_ROLE } from "../utils/constants";
+import { ADMIN_ROLE, USER_ROLE } from "../utils/constants";
+import { mapToUser } from "./mapper";
 
 /*
 Vad är ansvarsområdeet för controllers?
@@ -23,6 +24,7 @@ export async function login(
 ) {
   const foundUser = await repository.users.getByUsername(request.body.username);
 
+  // if (!foundUser) throw new NotFound("User not found!")
   if (!foundUser) return reply.status(404).send({ message: "User not found!" });
 
   if (foundUser.password !== request.body.password)
@@ -31,10 +33,8 @@ export async function login(
   const tokenPayload: TokenPayload = {
     username: foundUser.username,
     email: foundUser.email,
-    role: ADMIN_ROLE,
+    role: USER_ROLE,
   };
-
-  request.user; // decoded token
 
   const token = await reply.jwtSign(tokenPayload, {
     expiresIn: "100y",
@@ -42,6 +42,6 @@ export async function login(
 
   return reply.status(200).send({
     token,
-    user: foundUser,
+    user: mapToUser(foundUser),
   });
 }
